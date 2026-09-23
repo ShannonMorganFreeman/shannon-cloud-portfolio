@@ -1,0 +1,5 @@
+.env
+.env.*
+.aws/
+*.log
+__pycache__/
