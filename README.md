@@ -1,5 +1,7 @@
 # Shannon Cloud Portfolio
 
+**Live site:** [www.shannonmorganfreeman.co.za](https://www.shannonmorganfreeman.co.za)
+
 A static portfolio website delivered through a private Amazon S3 origin and Amazon CloudFront. The project demonstrates a practical AWS hosting design, domain and TLS configuration, scoped deployment responsibilities, and cost-aware decisions.
 
 ## Architecture at a glance
