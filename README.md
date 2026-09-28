@@ -51,6 +51,17 @@ MFA is enabled on both identities. Permissions are designed to follow least priv
 - [Security](docs/security.md)
 - [Architecture diagram source](architecture/aws-architecture.md)
 
+## Website source
+
+The website's source of truth is maintained in the repository root:
+
+- `index.html` — page structure and content
+- `styles.css` — layout, visual design and responsive styling
+- `script.js` — client-side JavaScript
+- `assets/` — website images and CV
+
+These root-level files are used for deployment to Amazon S3 and delivery through CloudFront. Website changes should be made in the root files to keep the repository aligned with the deployed site.
+
 ## Scope and design choices
 
 This is a small static portfolio project. WAF, Shield Advanced, and CloudFront Origin Shield were not added because their additional cost and operational complexity were not justified by this project's requirements and traffic profile. Their absence is a deliberate scope decision, not a claim that they are never useful.

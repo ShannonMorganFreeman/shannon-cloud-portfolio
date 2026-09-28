@@ -2,6 +2,17 @@
 
 This document describes the deployment model without including credentials, secrets, or account-specific infrastructure identifiers.
 
+## Website source
+
+The deployable website is maintained in the repository root:
+
+- `index.html` — page structure and content
+- `styles.css` — layout, visual design and responsive styling
+- `script.js` — client-side JavaScript
+- `assets/` — website images and CV
+
+These root-level files are the source used for deployment to the private Amazon S3 origin. The `site/` duplicate has been removed; make and review website changes in the root-level files.
+
 ## Deployment identity
 
 Use AWS CLI authentication through AWS Sign-In, which provides temporary credentials. Do not configure or store long-lived IAM access keys for this workflow.
@@ -12,7 +23,7 @@ This is least privilege within the intended responsibility and project deploymen
 
 ## Deployment sequence
 
-1. Make and review site changes locally.
+1. Make and review changes to the root-level website files locally.
 2. Authenticate the intended CLI identity using AWS Sign-In and confirm the active identity before making AWS changes.
 3. Publish the updated static site objects to the configured private S3 origin using the established project deployment procedure.
 4. If the deployment requires immediate replacement of cached content, invalidate the relevant CloudFront paths using the established procedure.
