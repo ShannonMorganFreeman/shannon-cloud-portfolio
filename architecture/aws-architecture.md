@@ -26,7 +26,7 @@ flowchart LR
     MFA[MFA enabled on both IAM identities] -. identity control .-> Deploy
     MFA -. identity control .-> Admin
 
-    Budget[AWS Budgets\nUS$1 monthly cost budget\nNo notifications configured] -. cost governance .-> S3
+    Budget[AWS Budgets\nUS$1 monthly cost budget\nThreshold notification enabled] -. cost governance .-> S3
 ```
 
 ## Diagram notes
@@ -36,8 +36,8 @@ flowchart LR
 - Afrihost is the registrar. Route 53 is the public DNS host after nameserver delegation.
 - The deployment identity is used for project deployment; the administrative identity handles account administration such as IAM, Route 53, and ACM. Both identities have MFA.
 - AWS CLI authentication uses AWS Sign-In temporary credentials. No long-lived access keys are used for the described workflow.
-- The monthly US$1 budget has no notifications configured. It is a budget limit, not an alerting mechanism.
-- S3 versioning is intentionally disabled as a cost decision. Git/GitHub preserve source history.
-- WAF, Shield Advanced, and Origin Shield are outside this small project's current scope.
+- The monthly US$1 budget has a notification configured to alert when spending exceeds the threshold. It supports cost monitoring but does not cap spending or automatically stop services.
+- S3 versioning is intentionally disabled as a cost decision. Git and GitHub preserve source history, while recovery of deployed content requires redeployment.
+- AWS WAF, AWS Shield Advanced, and CloudFront Origin Shield are outside this small project's current scope and can be reassessed if requirements or risk change.
 
 Do not add account IDs, certificate ARNs, MFA serial numbers, or credential material to this diagram or its source.

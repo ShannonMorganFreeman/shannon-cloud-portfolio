@@ -4,23 +4,26 @@ Cost control is part of the architecture. This project uses a small, static-site
 
 ## Budget
 
-A monthly AWS cost budget is configured with a limit of **US$1.00**. At the time it was checked, actual spend was US$0.001 and the forecast was US$0.00; these are time-sensitive observations, not ongoing guarantees.
+A monthly AWS cost budget is configured with a limit of **US$1.00** and a notification to alert when spending exceeds the threshold.
 
-No budget notifications are configured. The budget is a cost-governance threshold and should not be described as an alerting system. Review current AWS billing and budget settings directly when operating the account.
+The budget provides visibility into costs and supports early investigation of unexpected charges. It is a monitoring and alerting mechanism, not a spending cap, and it does not automatically stop services. Actual charges may exceed the configured budget.
 
 ## Storage and history
 
-S3 versioning is intentionally disabled to avoid retaining prior object versions and increasing storage costs during repeated site deployments. This is a deliberate trade-off: accidental overwrites or deletions are not recoverable from S3 object versions.
+S3 versioning is intentionally disabled to avoid retaining prior object versions and increasing storage costs during repeated site deployments. This is a deliberate trade-off: accidental overwrites or deletions cannot be recovered through S3 object version history.
 
 Git and GitHub provide version history for the site's source and documentation. They do not restore deployed S3 objects by themselves; a known-good revision must be redeployed to restore site content.
 
 ## Scope choices
 
-WAF, Shield Advanced, and Origin Shield were not added. For the portfolio's current scale and requirements, their cost and operational overhead were not warranted. This is a context-specific decision and should be revisited if the traffic profile, availability target, or threat model changes.
+AWS WAF, AWS Shield Advanced, and CloudFront Origin Shield are not enabled. For the portfolio's current scale and requirements, their additional cost and operational overhead are not currently justified.
+
+These are project-specific decisions, not general recommendations against these services. They should be reassessed if the site's traffic, exposure, availability requirements, or risk profile changes.
 
 ## Operating practice
 
 - Check current AWS charges and budget status during project maintenance.
-- Treat US$1 as a configured budget limit, not a promise that the project cannot incur charges above it.
+- Treat US$1 as a configured budget threshold, not a guarantee that charges cannot exceed it.
+- Investigate budget notifications and unexpected changes in spending.
 - Before adding an AWS service or changing retention settings, review its expected cost and operational effect.
-- Keep the static delivery architecture aligned to actual project needs.
+- Keep the static delivery architecture aligned with actual project needs.

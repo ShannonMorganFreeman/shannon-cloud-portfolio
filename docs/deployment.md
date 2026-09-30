@@ -7,7 +7,7 @@ This document describes the deployment model without including credentials, secr
 The deployable website is maintained in the repository root:
 
 - `index.html` — page structure and content
-- `styles.css` — layout, visual design and responsive styling
+- `styles.css` — layout, visual design, and responsive styling
 - `script.js` — client-side JavaScript
 - `assets/` — website images and CV
 
@@ -15,11 +15,13 @@ These root-level files are the source used for deployment to the private Amazon 
 
 ## Deployment identity
 
-Use AWS CLI authentication through AWS Sign-In, which provides temporary credentials. Do not configure or store long-lived IAM access keys for this workflow.
+AWS CLI authentication uses AWS Sign-In, which provides temporary credentials. Do not configure or store long-lived IAM access keys for this workflow.
 
-Routine portfolio deployment uses the deployment identity. Its permissions are scoped to the project's defined deployment responsibilities, including the actions needed to deploy site content and manage the relevant CloudFront delivery configuration. Administrative tasks such as IAM, DNS, and ACM management belong to the administrative identity.
+Routine portfolio deployment uses the deployment identity. Its permissions are managed through IAM groups and policies and are scoped to the project's defined deployment responsibilities, including the actions needed to publish and maintain site content.
 
-This is least privilege within the intended responsibility and project deployment scope: the deployment identity should have the permissions required to perform its assigned work, without unrelated account-administration access.
+This follows the principle of least privilege within the intended responsibility and project scope: the deployment identity should have the permissions required to perform its assigned work, without unnecessary administrative access.
+
+Use the separate administrative identity for account-level tasks that require broader permissions, including IAM, Route 53, and ACM administration.
 
 ## Deployment sequence
 
@@ -30,12 +32,16 @@ This is least privilege within the intended responsibility and project deploymen
 5. Open the site through its HTTPS hostname and confirm the expected content is served.
 6. Review the deployment result and current AWS cost status.
 
-The exact upload and invalidation commands depend on the project's existing site build and deployment setup. Confirm those values from the local project configuration before running commands; do not copy commands from another AWS account or project.
+Deployment commands should use the project's verified configuration and the intended AWS CLI identity. Confirm the target bucket, distribution, paths, and profile before running commands. Do not copy infrastructure identifiers or credentials into public documentation.
 
 ## Recovery considerations
 
-S3 versioning is disabled intentionally. Git/GitHub retains source history, so recovery means checking out a known-good source revision and deploying it again. Git history does not restore S3 objects automatically.
+S3 versioning is intentionally disabled as a cost-control decision. Git and GitHub retain source history, so recovery means checking out a known-good source revision, reviewing it, and deploying it again.
+
+Git history does not restore deployed S3 objects by itself. After redeployment, verify the site through its HTTPS hostname and invalidate relevant CloudFront paths if cached content needs to be replaced.
 
 ## Administrative changes
 
-Use the administrative identity for IAM, Route 53, and ACM work. Changes to DNS or certificate configuration should be reviewed separately from routine site publishing. No infrastructure changes are required for a normal content deployment.
+Use the administrative identity for IAM, Route 53, and ACM work. Changes to DNS or certificate configuration should be reviewed separately from routine site publishing.
+
+Infrastructure changes should be planned and verified before they are applied. Keep administrative permissions separate from routine deployment permissions, and review AWS costs and site availability after changes where relevant.

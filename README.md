@@ -8,16 +8,18 @@ A static portfolio website delivered through a private Amazon S3 origin and Amaz
 
 ```mermaid
 flowchart LR
-    V[Visitor] -->|HTTPS| CF[Amazon CloudFront\nHTTPS redirect · TLS 1.3]
+    V[Visitor] -->|HTTPS| CF[Amazon CloudFront\nHTTP redirects to HTTPS · TLS 1.3]
     REG[Afrihost\nDomain registrar] -->|Nameserver delegation| R53[Amazon Route 53\nPublic hosted zone]
-    R53 -->|A / alias · apex and www| CF
+    R53 -->|A alias · apex and www| CF
     ACM[AWS Certificate Manager\nus-east-1 · DNS validated\napex and www] -. viewer certificate .-> CF
     CF -->|Signed origin requests via OAC| S3[Private Amazon S3 bucket\nBlock Public Access · SSE-S3]
     CLI[AWS CLI + AWS Sign-In\ntemporary credentials] --> DEP[Deployment identity\nproject deployment responsibilities]
     ADM[Administrative identity\nadministrative responsibilities] --> IAM[IAM, DNS and certificate administration]
     DEP -->|scoped deployment actions| S3
     DEP -->|distribution deployment actions| CF
-    B[AWS Budgets\nUS$1 monthly cost budget] -. cost governance .-> CF
+    MFA[MFA enabled on both IAM identities] -. identity control .-> DEP
+    MFA -. identity control .-> ADM
+    B[AWS Budgets\nUS$1 monthly cost budget\nThreshold notification enabled] -. cost governance .-> CF
 ```
 
 The diagram summarizes the deployed design; dotted links indicate supporting control or administration relationships rather than website traffic.
@@ -30,7 +32,7 @@ The diagram summarizes the deployed design; dotted links indicate supporting con
 - Route 53 hosts the public DNS zone. Apex and `www` records are aliases to the CloudFront distribution. Afrihost remains the registrar.
 - AWS Certificate Manager (ACM) provides the CloudFront viewer certificate from `us-east-1`. DNS validation covers both the apex and `www` hostnames.
 - AWS CLI access uses AWS Sign-In temporary credentials rather than long-lived access keys.
-- A monthly US$1 AWS Budget is configured. No budget notifications are configured.
+- A monthly US$1 AWS Budget is configured with a notification to alert when spending exceeds the threshold. This supports cost monitoring but does not cap spending or automatically stop services.
 - S3 versioning is intentionally disabled as a cost-control choice; Git and GitHub provide source history for the site and its documentation.
 
 ## IAM responsibilities
@@ -56,7 +58,7 @@ MFA is enabled on both identities. Permissions are designed to follow least priv
 The website's source of truth is maintained in the repository root:
 
 - `index.html` — page structure and content
-- `styles.css` — layout, visual design and responsive styling
+- `styles.css` — layout, visual design, and responsive styling
 - `script.js` — client-side JavaScript
 - `assets/` — website images and CV
 
@@ -64,7 +66,7 @@ These root-level files are used for deployment to Amazon S3 and delivery through
 
 ## Scope and design choices
 
-This is a small static portfolio project. WAF, Shield Advanced, and CloudFront Origin Shield were not added because their additional cost and operational complexity were not justified by this project's requirements and traffic profile. Their absence is a deliberate scope decision, not a claim that they are never useful.
+This is a small static portfolio project. AWS WAF, AWS Shield Advanced, and CloudFront Origin Shield were not added because their additional cost and operational complexity were not justified by this project's requirements and traffic profile. Their absence is a deliberate scope decision, not a claim that they are never useful.
 
 ## Status
 
